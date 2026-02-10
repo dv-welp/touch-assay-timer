@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Touch Assay Timer</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+
+  </head>
+    
+  <body>
+  <header>
+<h1> Touch Assay Timer </h1>
+</header>
+
+<main>
+    
+  <!-- SETUP SCREEN -->
+  
+<section id="setupScreen">
+  
+  <header class="setupHeader">
+    
+  <h2> Assay Setup </h2>
+   
+    <button id="overflowMenuButton" type="button" aria-label="Menu">
+  ⋮
+</button>
+
+   </header>
+
+<div id="overflowMenu" hidden>
+  <button id="openSavedAssays" type="button">Saved Assays</button>
+  <button id="openSettings" type="button">Settings</button>
+  <button id="openGuidelines" type="button">User Guidelines</button>
+</div>
+
+  
+  <p> Please enter your experimental requirements. </p>
+  
+  <form id="setupForm">
+   
+    <fieldset>
+      <legend> Experiment </legend>
+      
+      <label>
+        Experiment ID
+        <input
+               type="text"
+               id="assayName"
+               required
+               >
+      </label>
+                
+      
+      <label> 
+        Genotypes (comma-separated)
+        <input 
+               type="text" 
+               id="genotypes" 
+               placeholder="WT, mutantA, mutantB" 
+               required
+               >
+      </label>
+    </fieldset>
+      
+    <fieldset>
+      <legend> Stimulation </legend>
+      
+      <label>
+        Inter-stimulus Interval (s)
+        <input 
+               type="number" 
+               id="ISI" 
+               min="0.1" 
+               step="0.1" 
+               required
+               >
+      </label>
+    
+    
+      <label>
+        Number of Stimulations
+        <input 
+               type="number" 
+               id="stimCount" 
+               min="1" 
+               step="1"
+               required
+               >
+      </label>
+    </fieldset>
+    
+    <fieldset>
+      <legend> Analysis </legend>
+      
+      <label>
+        Stimulations per bin (Bin Size)
+        <input 
+               type="number" 
+               id="binSize" 
+               min="1" 
+               step="1" 
+               required
+               >
+      </label>
+      
+      <p id="binWarning" class="warning" hidden> </p>
+      
+    </fieldset>
+    
+    <p class="instruction">
+      Please ensure your assay setup is ready before beginning.
+    </p>
+    
+    <button 
+            type="submit"
+            class="primary"
+            id="beginBtn"
+            >
+      Begin Assay
+    </button>
+    
+  </form>
+  
+      
+  
+</section>
+  
+<!-- ASSAY SCREEN -->
+  
+<section id="assayScreen" data-trial-active="false" hidden>
+    
+   <header>
+            
+      <select id="genotypeSelect"> 
+        <option value="" disabled selected>
+          Select Genotype
+        </option>     
+     </select>
+     
+  </header>
+      
+  <!-- Optional expandable progress toggle - JS should switch text to Minimise or Hide Progress later --> 
+  
+  <button id="toggleProgress" type="button">
+    Show Progress
+  </button>
+  
+  <!-- Primary interaction Zone -->
+  
+  <div id="tapZone">
+      
+      <button 
+              id="tapButton"
+              type="button"
+              >
+        Start Timer
+      </button>
+      
+   
+                                   
+   <div id="assayProgress" hidden>
+      <!-- Progress table populated by JS -->
+   </div>
+    
+  </div>
+      
+  <div id="runStatus" class="status" hidden> </div> 
+      
+    <footer>
+      
+      <button id="stopRun" type="button" class="danger" disabled> Stop Run </button>
+           
+      <button id="finishTrial" type="button" disabled> Finish Trial </button>
+      
+    </footer>
+    
+</section>
+  
+  
+<section id="exportScreen" hidden>
+  
+  <h2> Assay Export </h2>
+  
+  <p>Select datasets to include in the export.</p>
+
+  <fieldset>
+    <legend>Datasets</legend>
+
+    <div id="exportDatasetList">
+      </div>
+  </fieldset>
+  
+  <button 
+          id="exportExcel" 
+          class="primary">
+    Export to Excel
+  </button>
+  
+  <div class="navButtons">
+    
+    <button id="backToAssay" type="button"> Start New Trial </button>
+    
+    <button id="newAssay" type="button"> New Assay </button>
+    
+  </div>
+  
+</section>
+  
+<!-- SETTINGS SCREEN -->
+  
+<section id="settingsScreen" hidden>
+  
+  <h2> Settings </h2>
+  
+  <fieldset>
+    <legend> Timer Voiceover Options </legend>
+    
+    <label> 
+      <input
+             type="radio" 
+             name="voiceMode"
+             value="tick"
+             checked
+             >
+             Tick every second
+    </label>
+    
+    <label>
+      <input
+             type="radio"
+             name="voiceMode"
+             value="count"
+             >
+             Speak every second
+    </label>
+    
+    <label>
+      <input 
+             type="radio"
+             name="voiceMode"
+             value="tens"
+             >
+             Speak every ten seconds, tick in between
+    </label>
+    
+  </fieldset>
+  
+  <button id="closeSettings" type="button">
+    Back
+  </button>
+  
+  </section>
+  
+  <section id="guidelinesScreen" hidden>
+  <h2>User Guidelines</h2>
+
+  <p>
+    This tool is designed to run simple touch / stimulus–response assays.
+  </p>
+
+  <ul>
+    <li>Each trial consists of multiple runs (animals).</li>
+    <li>Each run records whether a response occurred during each stimulus interval.</li>
+    <li>Taps are recorded per interval, not by reaction time.</li>
+    <li>Runs stopped early or trials abandoned are marked as ineligible for analysis.</li>
+    <li>All data can be exported to Excel.</li>
+  </ul>
+
+  <p>
+    <strong>Important:</strong>
+  </p>
+
+  <ul>
+    <li>Deleting an assay permanently removes all associated data.</li>
+    <li>Deleted assays cannot be recovered.</li>
+    <li>Export data before deleting if you wish to keep a record.</li>
+  </ul>
+
+  <button id="closeGuidelines" type="button">
+    Back
+  </button>
+</section>
+
+<section id="savedAssaysScreen" hidden>
+  
+  <h2>Saved Assays</h2>
+
+  <div id="savedAssaysList">
+    <!-- populated by JS -->
+  </div>
+
+  <button id="closeSavedAssays" type="button">
+    Back
+  </button>
+  
+</section>
+
+  
+</main>
+ 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
